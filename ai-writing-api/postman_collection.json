@@ -1,0 +1,369 @@
+{
+	"info": {
+		"_postman_id": "ai-writing-api-collection",
+		"name": "AI Writing API",
+		"description": "Collection Postman pour tester l'API SaaS de rédaction assistée par IA avec Laravel et OpenAI.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"    console.log('Token saved:', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Inscription d'un nouvel utilisateur. Le token est automatiquement sauvegardé pour les requêtes suivantes."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"    console.log('Token saved:', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Connexion d'un utilisateur existant. Le token est automatiquement sauvegardé."
+					},
+					"response": []
+				},
+				{
+					"name": "Me (Profile)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me"]
+						},
+						"description": "Récupère les informations de l'utilisateur connecté."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.collectionVariables.set('token', '');",
+									"    console.log('Token cleared');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout"]
+						},
+						"description": "Déconnexion de l'utilisateur. Le token est supprimé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AI Features",
+			"item": [
+				{
+					"name": "Generate Text",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"prompt\": \"Écris un article de blog sur les avantages du télétravail pour les développeurs.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ai/generate-text",
+							"host": ["{{base_url}}"],
+							"path": ["ai", "generate-text"]
+						},
+						"description": "Génère du texte à partir d'un prompt. Le traitement est asynchrone via un Job."
+					},
+					"response": []
+				},
+				{
+					"name": "Summarize Text",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Laravel est un framework PHP open source, créé par Taylor Otwell en 2011. Il suit le patron de conception modèle-vue-contrôleur et offre de nombreuses fonctionnalités qui facilitent le développement d'applications web modernes. Parmi ses caractéristiques principales, on trouve un système de routage expressif, un ORM élégant appelé Eloquent, un système de migration de base de données, un moteur de templates Blade, et un système d'authentification intégré. Laravel est connu pour sa syntaxe élégante et sa documentation complète, ce qui en fait un choix populaire pour les développeurs PHP du monde entier.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ai/summarize",
+							"host": ["{{base_url}}"],
+							"path": ["ai", "summarize"]
+						},
+						"description": "Résume un texte long. Minimum 50 caractères requis."
+					},
+					"response": []
+				},
+				{
+					"name": "Rewrite Text",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Le développement web c'est vraiment super cool et y'a plein de trucs à apprendre. Laravel c'est un framework PHP qui est très utilisé par les devs.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ai/rewrite",
+							"host": ["{{base_url}}"],
+							"path": ["ai", "rewrite"]
+						},
+						"description": "Réécrit un texte pour améliorer sa clarté et son style. Minimum 20 caractères requis."
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Questions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Laravel est un framework PHP qui utilise le pattern MVC. Il dispose d'un ORM appelé Eloquent pour la gestion de la base de données, d'un système de migration, d'un moteur de templates Blade, et d'un système d'authentification intégré avec Sanctum pour les API.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ai/questions",
+							"host": ["{{base_url}}"],
+							"path": ["ai", "questions"]
+						},
+						"description": "Génère des questions à partir d'un texte pour tester la compréhension. Minimum 50 caractères requis."
+					},
+					"response": []
+				},
+				{
+					"name": "Get AI History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/ai/history",
+							"host": ["{{base_url}}"],
+							"path": ["ai", "history"]
+						},
+						"description": "Récupère l'historique des requêtes IA de l'utilisateur connecté (paginé)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get AI Request Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/ai/request/1",
+							"host": ["{{base_url}}"],
+							"path": ["ai", "request", "1"]
+						},
+						"description": "Récupère le détail d'une requête IA spécifique. Remplacez '1' par l'ID de la requête."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
