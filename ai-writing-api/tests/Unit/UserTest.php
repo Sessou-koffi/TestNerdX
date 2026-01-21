@@ -7,16 +7,13 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-/**
- * Tests unitaires pour le modèle User.
- */
+## Tests unitaires pour le modèle User.
 class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test de création d'un utilisateur avec les valeurs par défaut.
-     */
+    ## Test de création d'un utilisateur avec les valeurs par défaut.
+
     public function test_user_has_default_plan_and_quota(): void
     {
         $user = User::factory()->create();
@@ -25,9 +22,8 @@ class UserTest extends TestCase
         $this->assertEquals(10, $user->ai_requests_remaining);
     }
 
-    /**
-     * Test de la méthode hasQuotaRemaining() quand il reste du quota.
-     */
+    ## Test de la méthode hasQuotaRemaining() quand il reste du quota.
+
     public function test_has_quota_remaining_returns_true_when_quota_available(): void
     {
         $user = User::factory()->create(['ai_requests_remaining' => 5]);
@@ -35,9 +31,7 @@ class UserTest extends TestCase
         $this->assertTrue($user->hasQuotaRemaining());
     }
 
-    /**
-     * Test de la méthode hasQuotaRemaining() quand le quota est épuisé.
-     */
+    ## Test de la méthode hasQuotaRemaining() quand le quota est épuisé.
     public function test_has_quota_remaining_returns_false_when_quota_exhausted(): void
     {
         $user = User::factory()->create(['ai_requests_remaining' => 0]);
@@ -45,9 +39,7 @@ class UserTest extends TestCase
         $this->assertFalse($user->hasQuotaRemaining());
     }
 
-    /**
-     * Test de la méthode decrementQuota().
-     */
+    ## Test de la méthode decrementQuota().
     public function test_decrement_quota_decreases_remaining_requests(): void
     {
         $user = User::factory()->create(['ai_requests_remaining' => 5]);
@@ -57,9 +49,7 @@ class UserTest extends TestCase
         $this->assertEquals(4, $user->fresh()->ai_requests_remaining);
     }
 
-    /**
-     * Test que decrementQuota() ne descend pas en dessous de zéro.
-     */
+    ## Test que decrementQuota() ne descend pas en dessous de zéro.
     public function test_decrement_quota_does_not_go_below_zero(): void
     {
         $user = User::factory()->create(['ai_requests_remaining' => 0]);
@@ -69,9 +59,7 @@ class UserTest extends TestCase
         $this->assertEquals(0, $user->fresh()->ai_requests_remaining);
     }
 
-    /**
-     * Test de la relation aiRequests.
-     */
+    ## Test de la relation aiRequests.
     public function test_user_has_many_ai_requests(): void
     {
         $user = User::factory()->create();
