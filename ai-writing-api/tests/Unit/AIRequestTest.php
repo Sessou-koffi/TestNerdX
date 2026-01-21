@@ -7,16 +7,14 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-/**
- * Tests unitaires pour le modèle AIRequest.
- */
+## Tests unitaires pour le modèle AIRequest.
+
 class AIRequestTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test de création d'une requête IA.
-     */
+    ## Test de création d'une requête IA.
+
     public function test_ai_request_can_be_created(): void
     {
         $user = User::factory()->create();
@@ -35,9 +33,7 @@ class AIRequestTest extends TestCase
         ]);
     }
 
-    /**
-     * Test de la relation user.
-     */
+    ## Test de la relation user.
     public function test_ai_request_belongs_to_user(): void
     {
         $user = User::factory()->create();
@@ -47,9 +43,7 @@ class AIRequestTest extends TestCase
         $this->assertEquals($user->id, $aiRequest->user->id);
     }
 
-    /**
-     * Test de la méthode isPending().
-     */
+    ## Test de la méthode isPending().
     public function test_is_pending_returns_correct_value(): void
     {
         $pending = AIRequest::factory()->create(['status' => AIRequest::STATUS_PENDING]);
@@ -59,9 +53,7 @@ class AIRequestTest extends TestCase
         $this->assertFalse($completed->isPending());
     }
 
-    /**
-     * Test de la méthode isCompleted().
-     */
+    ## Test de la méthode isCompleted().
     public function test_is_completed_returns_correct_value(): void
     {
         $pending = AIRequest::factory()->create(['status' => AIRequest::STATUS_PENDING]);
@@ -71,9 +63,7 @@ class AIRequestTest extends TestCase
         $this->assertTrue($completed->isCompleted());
     }
 
-    /**
-     * Test de la méthode isFailed().
-     */
+    ## Test de la méthode isFailed().
     public function test_is_failed_returns_correct_value(): void
     {
         $pending = AIRequest::factory()->create(['status' => AIRequest::STATUS_PENDING]);
@@ -83,9 +73,7 @@ class AIRequestTest extends TestCase
         $this->assertTrue($failed->isFailed());
     }
 
-    /**
-     * Test de la méthode markAsCompleted().
-     */
+   ## Test de la méthode markAsCompleted().
     public function test_mark_as_completed_updates_status_and_response(): void
     {
         $aiRequest = AIRequest::factory()->create([
@@ -100,9 +88,8 @@ class AIRequestTest extends TestCase
         $this->assertEquals('This is the AI response', $aiRequest->response);
     }
 
-    /**
-     * Test de la méthode markAsFailed().
-     */
+    ## Test de la méthode markAsFailed().
+
     public function test_mark_as_failed_updates_status_and_error_message(): void
     {
         $aiRequest = AIRequest::factory()->create([
@@ -116,9 +103,7 @@ class AIRequestTest extends TestCase
         $this->assertEquals('API Error: Rate limit exceeded', $aiRequest->error_message);
     }
 
-    /**
-     * Test des constantes de type.
-     */
+    ## Test des constantes de type.
     public function test_type_constants_are_defined(): void
     {
         $this->assertEquals('generate', AIRequest::TYPE_GENERATE);
@@ -127,9 +112,7 @@ class AIRequestTest extends TestCase
         $this->assertEquals('questions', AIRequest::TYPE_QUESTIONS);
     }
 
-    /**
-     * Test des constantes de statut.
-     */
+   ## Test des constantes de statut.
     public function test_status_constants_are_defined(): void
     {
         $this->assertEquals('pending', AIRequest::STATUS_PENDING);
